@@ -9,6 +9,8 @@ NodeJS
 CronJob
 </br>
 Twitter Api 
+</br>
+Pug
 </hr>
 
 <a>https://quranpot.herokuapp.com/</a>
