@@ -28,8 +28,8 @@ const tweet = async () => {
     let data = await response.json();
     let today = new Date();
     let date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-    let time = today.getHours() + ":" + today.getMinutes();
-    let dateTime = date + ' ' + time;
+    let time = today.toLocaleTimeString();
+    let dateTime = date + '  ' + time;
     await rwClient.v1.tweet(JSON.stringify(data.data.text) + '\n \n Date: ' + dateTime);
     console.log("tweet successfully created")
   } catch (e) {
