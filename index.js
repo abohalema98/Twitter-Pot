@@ -19,6 +19,19 @@ app.get("/", (req, res) => {
 })
 
 
+// handling time format
+var options = {
+  timeZone: 'Africa/Cairo',
+  year: 'numeric',
+  month: 'numeric',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: 'numeric',
+},
+formatter = new Intl.DateTimeFormat([], options);
+
+
+
 // Handeling the cron job
 const tweet = async () => {
   let quranApi = 'https://api.alquran.cloud/ayah/';
@@ -26,11 +39,8 @@ const tweet = async () => {
     let random = Math.floor(Math.random() * 6236) + 1
     let response = await fetch(quranApi + random + "/ar.asad")
     let data = await response.json();
-    let today = new Date();
-    let date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-    let time = today.toLocaleTimeString();
-    let dateTime = date + '  ' + time;
-    await rwClient.v1.tweet(JSON.stringify(data.data.text) + '\n \n Date: ' + dateTime);
+    let localtime = formatter.format(new Date())
+    await rwClient.v1.tweet(JSON.stringify(data.data.text) + '\n \n التَّوْقِيتُ: ' + localtime);
     console.log("tweet successfully created")
   } catch (e) {
     console.error(e)
