@@ -3,8 +3,8 @@ const express = require("express");
 const app = express();
 const rwClient = require("./Controllers/twitterPot.js");
 const fetch = require('node-fetch');
-const cron = require('node-cron');
 const path = require('path');
+const delay = 480000;
 
 // load view engine
 app.set("views", path.join(__dirname, "views"));
@@ -19,19 +19,6 @@ app.get("/", (req, res) => {
 })
 
 
-// handling time format
-var options = {
-  timeZone: 'Africa/Cairo',
-  year: 'numeric',
-  month: 'numeric',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: 'numeric',
-},
-formatter = new Intl.DateTimeFormat([], options);
-
-
-
 // Handeling the cron job
 const tweet = async () => {
   let quranApi = 'https://api.alquran.cloud/ayah/';
@@ -39,18 +26,21 @@ const tweet = async () => {
     let random = Math.floor(Math.random() * 6236) + 1
     let response = await fetch(quranApi + random + "/ar.asad")
     let data = await response.json();
-    let localtime = formatter.format(new Date())
-    await rwClient.v1.tweet(JSON.stringify(data.data.text) + '\n \n التَّوْقِيتُ: ' + localtime);
+    let numberOfAyahs = await data.data.surah.numberOfAyahs;
+    let surah = await JSON.stringify([data.data.surah.name]);
+    let ayah = await JSON.stringify(data.data.text);
+    await rwClient.v1.tweet(ayah + '\n \n' + surah + ' - ' + ' رقم الآيــة: '+ numberOfAyahs);
     console.log("tweet successfully created")
   } catch (e) {
     console.error(e)
   }
 }
 
-// Cron job
-cron.schedule('*/12 * * * *', () => {
+
+// cron job
+setInterval(() => {
   tweet();
-});
+}, delay);
 
 
 // Starting the server
