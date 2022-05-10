@@ -26,18 +26,17 @@ const tweet = async () => {
     let random = Math.floor(Math.random() * 6236) + 1
     let response = await fetch(quranApi + random + "/ar.asad")
     let data = await response.json();
-    let numberOfAyahs = await data.data.surah.numberOfAyahs;
+    let numberInSurah = await data.data.numberInSurah;
     let surah = await JSON.stringify([data.data.surah.name]);
     let ayah = await JSON.stringify(data.data.text);
-    await rwClient.v1.tweet(ayah + '\n \n' + surah + ' - ' + ' رقم الآيــة: '+ numberOfAyahs);
+    await rwClient.v1.tweet(ayah + '\n \n' + surah + ' - ' + ' رقم الآيــة: '+ numberInSurah);
     console.log("tweet successfully created")
   } catch (e) {
     console.error(e)
   }
 }
 
-
-// cron job
+// cron job to tweet every 8 minutes
 setInterval(() => {
   tweet();
 }, delay);
